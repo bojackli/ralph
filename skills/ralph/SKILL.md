@@ -90,6 +90,9 @@ Each criterion must be something Ralph can CHECK, not something vague.
 - "Clicking delete shows confirmation dialog"
 - "Typecheck passes"
 - "Tests pass"
+- "Generate deterministic fixture data covering valid and invalid ETL source records"
+- "Run the ETL entrypoint against the test database using MCP when available"
+- "Rerunning the ETL does not create duplicates"
 
 ### Bad criteria (vague):
 - "Works correctly"
@@ -114,6 +117,17 @@ For stories with testable logic, also include:
 
 Frontend stories are NOT complete until visually verified. Ralph will use the dev-browser skill to navigate to the page, interact with the UI, and confirm changes work.
 
+### For ETL, migration, backfill, sync, import/export, or reconciliation stories:
+Always preserve or add criteria like:
+```
+"Generate deterministic fixture data for ETL validation"
+"Run the ETL entrypoint against the test database using MCP when available"
+"Target row counts and mapped fields match expected results"
+"Rerunning the ETL does not create duplicates"
+```
+
+If the source PRD mentions test databases, reconciliation, or seeded validation data, keep that detail in the JSON instead of compressing it away.
+
 ---
 
 ## Conversion Rules
@@ -124,6 +138,7 @@ Frontend stories are NOT complete until visually verified. Ralph will use the de
 4. **All stories**: `passes: false` and empty `notes`
 5. **branchName**: Derive from feature name, kebab-case, prefixed with `ralph/`
 6. **Always add**: "Typecheck passes" to every story's acceptance criteria
+7. **For ETL stories**: Preserve deterministic data generation, MCP test database validation, row-count verification, mapping checks, and idempotency criteria when present; add them if the source PRD implies them but forgot to state them explicitly
 
 ---
 
@@ -254,5 +269,6 @@ Before writing prd.json, verify:
 - [ ] Stories are ordered by dependency (schema to backend to UI)
 - [ ] Every story has "Typecheck passes" as criterion
 - [ ] UI stories have "Verify in browser using dev-browser skill" as criterion
+- [ ] ETL stories include deterministic data generation and validation criteria
 - [ ] Acceptance criteria are verifiable (not vague)
 - [ ] No story depends on a later story

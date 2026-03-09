@@ -1,0 +1,14 @@
+{
+  "name": "ralph-marketplace",
+  "plugins": [
+    {
+      "name": "ralph-skills",
+      "source": "./",
+      "description": "PRD generation and conversion skills for the Ralph autonomous agent loop",
+      "version": "1.0.0",
+      "keywords": ["ralph", "prd", "automation", "agent", "planning"],
+      "category": "productivity",
+      "skills": "./skills/"
+    }
+  ]
+}

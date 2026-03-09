@@ -89,6 +89,21 @@ Each story should be small enough to implement in one focused session.
 **Important:** 
 - Acceptance criteria must be verifiable, not vague. "Works correctly" is bad. "Button shows confirmation dialog before deleting" is good.
 - **For any story with UI changes:** Always include "Verify in browser using dev-browser skill" as acceptance criteria. This ensures visual verification of frontend work.
+- **For ETL, migration, backfill, sync, import/export, or reconciliation stories:** Include explicit criteria for deterministic test data generation, running against a test database when available, verifying row counts and mapped fields, and proving idempotency or duplicate handling where applicable.
+
+### ETL Story Rules
+
+When the feature involves ETL, data migration, backfill, sync jobs, imports, exports, or reconciliation:
+
+- Split the work so one story can focus on one pipeline change or validation slice
+- Prefer acceptance criteria that require real execution of the ETL entrypoint, not only unit-level helper validation
+- Include criteria for:
+  - Deterministic fixture or sample data generation
+  - Validation against an MCP-backed test database when available
+  - Expected row counts and field mappings
+  - Rerun behavior or idempotency
+  - Invalid-record handling or reconciliation output when relevant
+- Mention manual follow-up only when no automated or MCP-backed verification path exists
 
 ### 4. Functional Requirements
 Numbered list of specific functionalities:
@@ -109,6 +124,7 @@ What this feature will NOT include. Critical for managing scope.
 - Known constraints or dependencies
 - Integration points with existing systems
 - Performance requirements
+- For ETL stories, note source tables, target tables, scheduling assumptions, MCP test database usage, and validation entrypoints when known
 
 ### 8. Success Metrics
 How will success be measured?
@@ -227,6 +243,31 @@ Add priority levels to tasks so users can focus on what matters most. Tasks can 
 - Should we add keyboard shortcuts for priority changes?
 ```
 
+## ETL Example Pattern
+
+For ETL-style features, write stories more like this:
+
+```markdown
+### US-001: Add customer import mapping logic
+**Description:** As a developer, I need the ETL pipeline to map staged customer records into the warehouse schema correctly.
+
+**Acceptance Criteria:**
+- [ ] Generate deterministic fixture data covering valid, duplicate, and malformed source rows
+- [ ] Run the ETL entrypoint against the test database using MCP when available
+- [ ] Target table row counts and mapped fields match expected results
+- [ ] Rerunning the ETL does not create duplicate target records
+- [ ] Invalid source rows are rejected or logged as specified
+- [ ] Tests pass
+
+### US-002: Add reconciliation report for customer import
+**Description:** As an operator, I want a reconciliation report so I can confirm imported records match the staged input.
+
+**Acceptance Criteria:**
+- [ ] Reconciliation output reports imported, skipped, and failed row counts
+- [ ] Counts match the deterministic fixture data used for validation
+- [ ] Tests pass
+```
+
 ---
 
 ## Checklist
@@ -238,4 +279,5 @@ Before saving the PRD:
 - [ ] User stories are small and specific
 - [ ] Functional requirements are numbered and unambiguous
 - [ ] Non-goals section defines clear boundaries
+- [ ] ETL stories include deterministic data generation and validation criteria when applicable
 - [ ] Saved to `tasks/prd-[feature-name].md`
